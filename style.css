@@ -1,6 +1,12 @@
 
 .navbar {
     background-color: #111827;
+    display: fixed;
+        z-index: 1030;
+        width: 100%;
+    position: sticky;
+    top: 0;
+            
 }
 .navbar-brand {
     font-size: 1.5rem;
