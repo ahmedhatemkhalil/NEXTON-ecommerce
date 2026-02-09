@@ -30,13 +30,13 @@
                         <a class="nav-link " aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="about.html">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Products</a>
+                        <a class="nav-link" href="shop.html">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
+                        <a class="nav-link" href="contact.html">Contact</a>
                     </li>
                 </ul>
 
@@ -81,16 +81,371 @@
         </div>
     </nav>
 
-    <!-- Main Content Container -->
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="mb-4">Welcome to Our Store</h1>
-                <p class="lead">Your content goes here...</p>
-                <p class="lead">Your content goes here...</p>
+    <!-- Hero Banner Section -->
+    <section class="hero-banner">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- Left Side - Text Content -->
+                <div class="col-lg-6 col-md-12 hero-content">
+                    <div class="hero-text-wrapper">
+                        <p class="hero-price">Starting from: <span class="price-amount">$49.99</span></p>
+                        <h1 class="hero-title">
+                            <span class="d-block">Exclusive collection</span>
+                            <span class="d-block">for everyone</span>
+                        </h1>
+                        <button class="btn btn-hero">
+                            Explore now
+                            <i class="bi bi-search ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Right Side - Background Image -->
+                <div class="col-lg-6 col-md-12 hero-image-wrapper">
+                </div>
+            </div>
+            
+         
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section py-5">
+        <div class="container">
+            <h2 class="categories-heading mb-5">
+                <span class="fw-bold">Start exploring.</span>
+                <span class="fw-normal">Good things are waiting for you</span>
+            </h2>
+
+            <div class="row g-4 mb-4">
+                <!-- Men's Category Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card category-card-mens">
+                        <div class="category-content">
+                            <h3 class="category-title">For Men's</h3>
+                            <p class="category-price">Starting at $24</p>
+                            <div class="category-action">
+                                <span class="category-divider"></span>
+                                <a href="#" class="category-link">SHOP NOW <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Women's Category Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card category-card-womens">
+                        <div class="category-content">
+                            <h3 class="category-title">For Women's</h3>
+                            <p class="category-price">Starting at $19</p>
+                            <div class="category-action">
+                                <span class="category-divider"></span>
+                                <a href="#" class="category-link">SHOP NOW <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accessories Category Card -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="category-card category-card-accessories">
+                        <div class="category-content">
+                            <h3 class="category-title">Accessories</h3>
+                            <p class="category-price">Explore accessories</p>
+                            <div class="category-action">
+                                <span class="category-divider"></span>
+                                <a href="#" class="category-link">SHOP NOW <i class="bi bi-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section class="products-section py-5">
+        <div class="container">
+            <h2 class="section-heading mb-4">
+                <span class="fw-bold">Recommendations.</span>
+                <span class="fw-normal">Best matching products for you</span>
+            </h2>
+
+            <div class="row g-4">
+                <!-- Product Card 1 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman1.png" class="card-img-top" alt="Black Automatic Watch">
+                            <span class="badge discount-badge bg-light text-dark rounded-pill">50% Discount</span>
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman2.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman3.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman4.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Sellers Section -->
+    <section class="products-section py-5 ">
+        <div class="container">
+            <h2 class="section-heading mb-4">
+                <span class="fw-bold">Best Sellers.</span>
+                <span class="fw-normal">Best selling of the month</span>
+            </h2>
+
+            <div class="row g-4">
+                <!-- Product Card 1 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman5.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman6.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 3 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman7.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 4 -->
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-sm">
+                        <div class="position-relative">
+                            <img src="resources/woman8.png" class="card-img-top" alt="Black Automatic Watch">
+                            <button class="btn bookmark-btn">
+                                <i class="bi bi-bag"></i>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title product-name">Black Automatic Watch</h5>
+                            <p class="card-text product-category text-muted small">Accessories</p>
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div>
+                                    <span class="product-price">$169.99</span>
+                                    <span class="product-price-old text-muted text-decoration-line-through ms-2">$199.99</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="rating-value">4.9</span>
+                                    <span class="rating-count text-muted">(98)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotional Banner Section -->
+    <section class="promotional-banner-section py-5">
+        <div class="container">
+            <div class="card promotional-banner border-0 shadow-sm">
+                <div class="row g-0">
+                    <!-- Left Side - Text Content -->
+                    <div class="col-lg-6 col-md-12">
+                        <div class="promotional-content p-4 p-lg-5">
+                            <p class="promotional-badge mb-3">100% Original Products</p>
+                            <h2 class="promotional-title mb-3">The All New<br>Fashion Collection Items</h2>
+                            <p class="promotional-price mb-4">Starting from: <span class="price-value">$59.99</span></p>
+                            <button class="btn btn-promotional">
+                                Shop now
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Right Side - Background Image -->
+                    <div class="col-lg-6 col-md-12">
+                        <div class="promotional-image-wrapper">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  
 
     <footer class="footer">
         <div class="container">
