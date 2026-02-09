@@ -1,12 +1,10 @@
 
 .navbar {
     background-color: #111827;
-    display: fixed;
-        z-index: 1030;
-        width: 100%;
+    z-index: 1030;
+    width: 100%;
     position: sticky;
     top: 0;
-            
 }
 .navbar-brand {
     font-size: 1.5rem;
@@ -49,6 +47,10 @@
 }
 
 
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
 .navbar-toggler {
     border-color: rgba(255, 255, 255, 0.3);
 }
@@ -81,6 +83,695 @@
 
 .container {
     max-width: 1400px;
+}
+
+/* Hero Banner Styles */
+.hero-banner {
+    background-color: #f8f8f8;
+    background-image: url('src/hero-bg.png');
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    min-height: 600px;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, #f8f8f8 0%, #f8f8f8 50%, transparent 70%);
+    z-index: 1;
+}
+
+.hero-banner .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    min-height: 440px;
+}
+
+.hero-text-wrapper {
+    max-width: 500px;
+}
+
+.hero-price {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.price-amount {
+    font-weight: 600;
+    color: #374151;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.2;
+    margin-bottom: 2rem;
+    font-family: sans-serif;
+}
+
+.hero-title span {
+    display: block;
+}
+
+.btn-hero {
+    background-color: #1a202c;
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.btn-hero:hover {
+    background-color: #2d3748;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 32, 44, 0.3);
+}
+
+.btn-hero i {
+    font-size: 1.1rem;
+}
+
+.hero-image-wrapper {
+    min-height: 440px;
+}
+
+.hero-dots {
+    margin-top: 2rem;
+}
+
+.hero-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #d1d5db;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-dot:hover {
+    transform: scale(1.2);
+}
+
+.hero-dot.active {
+    background-color: #1a202c;
+    transform: scale(1.3);
+}
+
+/* Responsive Hero Banner */
+@media (max-width: 1200px) {
+    .hero-banner {
+        background-size: 60%;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-banner {
+        background-size: 50%;
+        background-position: right bottom;
+    }
+
+    .hero-content {
+        min-height: auto;
+        padding: 40px 0;
+        text-align: center;
+    }
+
+    .hero-text-wrapper {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-image-wrapper {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-banner {
+        background-size: 80%;
+        background-position: center bottom;
+        min-height: 500px;
+        padding: 60px 0;
+    }
+
+    .hero-banner::before {
+        background: linear-gradient(to bottom, #f8f8f8 0%, #f8f8f8 60%, transparent 100%);
+    }
+
+    .hero-content {
+        padding: 20px 0;
+    }
+
+    .hero-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-image-wrapper {
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-banner {
+        background-size: 100%;
+        min-height: 450px;
+        padding: 40px 0;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .btn-hero {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Categories Section Styles */
+.categories-section {
+    background-color: #ffffff;
+    padding: 80px 0;
+}
+
+.categories-heading {
+    font-size: 1.5rem;
+    color: #374151;
+    line-height: 1.3;
+}
+
+.categories-heading .fw-bold {
+    color: #1f2937;
+}
+
+.categories-heading .fw-normal {
+    color: #6b7280;
+}
+
+.category-card {
+    border-radius: 12px;
+    padding: 25px 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: flex-start;
+    border: 1px solid #d1d5db;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.category-card-mens {
+    background-color: #dbeafe;
+}
+
+.category-card-womens {
+    background-color: #e9d5ff;
+}
+
+.category-card-accessories {
+    background-color: #fed7aa;
+}
+
+.category-content {
+    width: 100%;
+}
+
+.category-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.category-price {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 16px;
+    font-weight: 400;
+}
+
+.category-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.category-divider {
+    width: 1px;
+    height: 24px;
+    background-color: #d1d5db;
+}
+
+.category-link {
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s ease;
+}
+
+.category-link:hover {
+    color: #0d6efd;
+}
+
+.category-link i {
+    font-size: 1rem;
+}
+
+.pagination-dots {
+    margin-top: 40px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #374151;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dot:hover {
+    transform: scale(1.2);
+}
+
+.dot.active {
+    background-color: #1a202c;
+    transform: scale(1.3);
+}
+
+/* Responsive Categories Section */
+@media (max-width: 992px) {
+    .categories-heading {
+        font-size: 1.35rem;
+    }
+
+    .category-title {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .categories-section {
+        padding: 60px 0;
+    }
+
+    .categories-heading {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+
+    .category-card {
+        min-height: 180px;
+        padding: 20px 18px;
+    }
+
+    .category-title {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .categories-heading {
+        font-size: 1.1rem;
+    }
+
+    .category-card {
+        min-height: 160px;
+        padding: 18px 15px;
+    }
+
+    .category-title {
+        font-size: 0.9rem;
+    }
+
+    .category-price {
+        font-size: 0.85rem;
+    }
+
+    .category-link {
+        font-size: 0.8rem;
+    }
+}
+
+/* Products Section Styles */
+.products-section {
+    padding: 60px 0;
+    background-color: #ffffff;
+}
+
+.section-heading {
+    font-size: 1.5rem;
+    color: #374151;
+    line-height: 1.3;
+}
+
+.section-heading .fw-bold {
+    color: #1f2937;
+}
+
+.section-heading .fw-normal {
+    color: #6b7280;
+}
+
+.product-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+}
+
+.product-card .card-img-top {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img-top {
+    transform: scale(1.03);
+}
+
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+    border: none;
+}
+
+.bookmark-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.bookmark-btn:hover {
+    background-color: white;
+    transform: scale(1.1);
+}
+
+.bookmark-btn i {
+    font-size: 1rem;
+    color: #374151;
+}
+
+.product-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 6px;
+}
+
+.product-category {
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.product-price-old {
+    font-size: 0.85rem;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.rating-value {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 0.85rem;
+}
+
+.rating-count {
+    font-size: 0.8rem;
+}
+
+/* Responsive Products Section */
+@media (max-width: 992px) {
+    .section-heading {
+        font-size: 1.35rem;
+    }
+
+    .product-card .card-img-top {
+        height: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    .products-section {
+        padding: 50px 0;
+    }
+
+    .section-heading {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+
+    .product-card .card-img-top {
+        height: 220px;
+    }
+
+    .product-name {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .products-section {
+        padding: 40px 0;
+    }
+
+    .section-heading {
+        font-size: 1.1rem;
+    }
+
+    .product-card .card-img-top {
+        height: 200px;
+    }
+
+    .product-name {
+        font-size: 0.85rem;
+    }
+
+    .product-price {
+        font-size: 0.95rem;
+    }
+
+    .product-price-old {
+        font-size: 0.8rem;
+    }
+
+    .rating-value {
+        font-size: 0.8rem;
+    }
+
+    .rating-count {
+        font-size: 0.75rem;
+    }
+
+    .discount-badge {
+        font-size: 0.7rem;
+        padding: 4px 10px;
+    }
+}
+
+/* Promotional Banner Section Styles */
+.promotional-banner-section {
+    padding: 60px 0;
+    background-color: #ffffff;
+}
+
+.promotional-banner {
+    background-color: #f3f4f6;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.promotional-content {
+    background-color: #f3f4f6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.promotional-badge {
+    font-size: 0.95rem;
+    color: #6b7280;
+    font-weight: 400;
+    margin: 0;
+}
+
+.promotional-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.promotional-price {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.price-value {
+    font-weight: 600;
+    color: #374151;
+}
+
+.btn-promotional {
+    background-color: #1a202c;
+    color: white;
+    border: none;
+    padding: 12px 28px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+}
+
+.btn-promotional:hover {
+    background-color: #2d3748;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(26, 32, 44, 0.3);
+}
+
+.promotional-image-wrapper {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    background-image: url('src/bg-image.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: white;
+}
+
+/* Responsive Promotional Banner */
+@media (max-width: 992px) {
+    .promotional-content {
+        min-height: 300px;
+        text-align: center;
+        align-items: center;
+    }
+
+    .promotional-title {
+        font-size: 1.75rem;
+    }
+
+    .btn-promotional {
+        align-self: center;
+    }
+
+    .promotional-image-wrapper {
+        min-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .promotional-banner-section {
+        padding: 40px 0;
+    }
+
+    .promotional-content {
+        min-height: 250px;
+        padding: 30px 25px !important;
+    }
+
+    .promotional-title {
+        font-size: 1.5rem;
+    }
+
+    .promotional-image-wrapper {
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .promotional-title {
+        font-size: 1.35rem;
+    }
+
+    .promotional-badge {
+        font-size: 0.85rem;
+    }
+
+    .promotional-price {
+        font-size: 0.95rem;
+    }
+
+    .btn-promotional {
+        padding: 10px 24px;
+        font-size: 0.9rem;
+    }
 }
 
 /* Footer Styles */
