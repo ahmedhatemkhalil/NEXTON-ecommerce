@@ -14,39 +14,70 @@
 <body class="auth-body">
     <div class="auth-container">
         <div class="auth-wrapper">
-            <!-- Logo -->
-            <div class="auth-logo mb-4">
-                <a href="./index.html">
-                    <img src="src/logo.png" alt="logo" class="auth-logo-img">
-                </a>
-            </div>
+         
 
             <!-- Sign Up Form -->
             <div class="auth-form-container">
-                <h1 class="auth-title mb-4">Sign Up</h1>
+                <h1 class="auth-title mb-4">Register</h1>
+                <p class="auth-subtitle mb-4">Create your account to get started</p>
 
                 <form class="auth-form">
                     <div class="mb-4">
-                        <label for="fullName" class="auth-label">Full Name</label>
-                        <input type="text" class="form-control auth-input" id="fullName" placeholder="John Doe">
+                        <label for="name" class="auth-label">Full Name</label>
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-person auth-input-icon"></i>
+                            <input type="text" class="form-control auth-input" id="name" placeholder="Enter your full name" required>
+                        </div>
                     </div>
 
                     <div class="mb-4">
                         <label for="email" class="auth-label">Email</label>
-                        <input type="email" class="form-control auth-input" id="email" placeholder="example@example.com">
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-envelope auth-input-icon"></i>
+                            <input type="email" class="form-control auth-input" id="email" placeholder="example@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="role" class="auth-label">Account Type</label>
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-shield-check auth-input-icon"></i>
+                            <select class="form-control auth-input" id="role" required>
+                                <option value="">Select account type</option>
+                                <option value="customer">Customer</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <small class="text-muted">Choose your account type. Admin accounts have additional privileges.</small>
                     </div>
 
                     <div class="mb-4">
                         <label for="password" class="auth-label">Password</label>
-                        <input type="password" class="form-control auth-input" id="password" placeholder="">
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-lock auth-input-icon"></i>
+                            <input type="password" class="form-control auth-input" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="auth-password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye" id="passwordIcon"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted">Password must be at least 6 characters long.</small>
                     </div>
 
                     <div class="mb-4">
-                        <label for="confirmPassword" class="auth-label">Confirm Password</label>
-                        <input type="password" class="form-control auth-input" id="confirmPassword" placeholder="">
+                        <label for="password-again" class="auth-label">Password (Again)</label>
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-lock-fill auth-input-icon"></i>
+                            <input type="password" class="form-control auth-input" id="password-again" placeholder="Confirm your password" required>
+                            <button type="button" class="auth-password-toggle" id="togglePasswordAgain" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye" id="passwordAgainIcon"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn auth-btn w-100 mb-3">Continue</button>
+                    <button type="submit" class="btn auth-btn w-100 mb-3">
+                        <span class="auth-btn-text">Continue</span>
+                        <i class="bi bi-arrow-right auth-btn-icon"></i>
+                    </button>
                 </form>
 
                 <div class="auth-divider">
@@ -55,7 +86,7 @@
 
                 <div class="auth-footer text-center mt-4">
                     <p class="auth-footer-text">
-                        Already have an account? <a href="./login.html" class="auth-link">Login</a>
+                        Already a member? <a href="./login.html" class="auth-link">Login</a>
                     </p>
                 </div>
             </div>
@@ -63,8 +94,72 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Redirect if already logged in
+        redirectIfLoggedIn();
+
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const togglePasswordAgain = document.getElementById('togglePasswordAgain');
+        const passwordInput = document.getElementById('password');
+        const passwordAgainInput = document.getElementById('password-again');
+        const passwordIcon = document.getElementById('passwordIcon');
+        const passwordAgainIcon = document.getElementById('passwordAgainIcon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordIcon.classList.toggle('bi-eye');
+            passwordIcon.classList.toggle('bi-eye-slash');
+        });
+
+        togglePasswordAgain.addEventListener('click', function() {
+            const type = passwordAgainInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordAgainInput.setAttribute('type', type);
+            passwordAgainIcon.classList.toggle('bi-eye');
+            passwordAgainIcon.classList.toggle('bi-eye-slash');
+        });
+
+        // Form submission - Registration
+        const form = document.querySelector('.auth-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const role = document.getElementById('role').value;
+            const password = document.getElementById('password').value;
+            const passwordAgain = document.getElementById('password-again').value;
+
+            // Validate passwords match
+            if (password !== passwordAgain) {
+                passwordAgainInput.classList.add('auth-input-error');
+                showMessage('Passwords do not match!', 'error');
+                setTimeout(() => {
+                    passwordAgainInput.classList.remove('auth-input-error');
+                }, 3000);
+                return;
+            }
+
+            // Register user
+            const result = registerUser(email, password, role, name);
+
+            if (result.success) {
+                showMessage('Registration successful! Redirecting to login...', 'success');
+                // Redirect to login page after successful registration
+                setTimeout(() => {
+                    // Pass email as URL parameter for convenience (optional)
+                    window.location.href = `./login.html?email=${encodeURIComponent(email)}`;
+                }, 1500);
+            } else {
+                showMessage(result.message, 'error');
+            }
+        });
+    </script>
 </body>
 
 </html>

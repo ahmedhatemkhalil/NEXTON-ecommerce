@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "email": "admin@123.com",
+    "password": "admin123",
+    "role": "admin",
+    "name": "Admin",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "id": 2,
+    "email": "customer@123.com",
+    "password": "customer123",
+    "role": "customer",
+    "name": "Customer",
+    "createdAt": "2024-01-01T00:00:00.000Z"
+  }
+]
+

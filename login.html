@@ -14,29 +14,35 @@
 <body class="auth-body">
     <div class="auth-container">
         <div class="auth-wrapper">
-            <!-- Logo -->
-            <div class="auth-logo mb-4">
-                <a href="./index.html">
-                    <img src="src/logo.png" alt="logo" class="auth-logo-img">
-                </a>
-            </div>
-
             <!-- Login Form -->
             <div class="auth-form-container">
                 <h1 class="auth-title mb-4">Login</h1>
+                <p class="auth-subtitle mb-4">Welcome back! Please sign in to your account</p>
 
                 <form class="auth-form">
                     <div class="mb-4">
                         <label for="email" class="auth-label">Email</label>
-                        <input type="email" class="form-control auth-input" id="email" placeholder="example@example.com">
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-envelope auth-input-icon"></i>
+                            <input type="email" class="form-control auth-input" id="email" placeholder="example@example.com" required>
+                        </div>
                     </div>
 
                     <div class="mb-4">
                         <label for="password" class="auth-label">Password</label>
-                        <input type="password" class="form-control auth-input" id="password" placeholder="">
+                        <div class="auth-input-wrapper">
+                            <i class="bi bi-lock auth-input-icon"></i>
+                            <input type="password" class="form-control auth-input" id="password" placeholder="Enter your password" required>
+                            <button type="button" class="auth-password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                                <i class="bi bi-eye" id="passwordIcon"></i>
+                            </button>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn auth-btn w-100 mb-3">Continue</button>
+                    <button type="submit" class="btn auth-btn w-100 mb-3">
+                        <span class="auth-btn-text">Continue</span>
+                        <i class="bi bi-arrow-right auth-btn-icon"></i>
+                    </button>
                 </form>
 
                 <div class="auth-divider">
@@ -53,8 +59,64 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="auth.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Redirect if already logged in
+        redirectIfLoggedIn();
+
+        // Pre-fill email from URL parameter (if coming from signup)
+        const urlParams = new URLSearchParams(window.location.search);
+        const emailParam = urlParams.get('email');
+        if (emailParam) {
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.value = decodeURIComponent(emailParam);
+                // Show a helpful message
+                showMessage('Registration successful! Please log in with your credentials.', 'success');
+            }
+        }
+
+        // Password visibility toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('passwordIcon');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordIcon.classList.toggle('bi-eye');
+            passwordIcon.classList.toggle('bi-eye-slash');
+        });
+
+        // Form submission - Login
+        const form = document.querySelector('.auth-form');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Login user
+            const result = loginUser(email, password);
+
+            if (result.success) {
+                showMessage(result.message, 'success');
+                // Redirect based on role
+                setTimeout(() => {
+                    if (result.user.role === 'admin') {
+                        window.location.href = './admin-dashboard.html';
+                    } else {
+                        window.location.href = './index.html';
+                    }
+                }, 1000);
+            } else {
+                showMessage(result.message, 'error');
+            }
+        });
+    </script>
 </body>
 
 </html>
