@@ -1,0 +1,406 @@
+/**
+ * Authentication System with Role-Based Access Control (RBAC)
+ * 
+ * This file handles:
+ * - User registration (Admin/Customer)
+ * - User login
+ * - Session management (using localStorage)
+ * - Role-based access control
+ * - Logout functionality
+ */
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+/**
+ * Get all users from localStorage
+ * In a real app, this would be an API call to a backend
+ */
+function getUsers() {
+    const usersJson = localStorage.getItem('users');
+    if (usersJson) {
+        return JSON.parse(usersJson);
+    }
+    // Initialize with default users from users.json
+    const defaultUsers = [
+        {
+            id: 1,
+            email: "admin@123.com",
+            password: "admin123",
+            role: "admin",
+            name: "Admin",
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: 2,
+            email: "customer@123.com",
+            password: "customer123",
+            role: "customer",
+            name: "Customer",
+            createdAt: new Date().toISOString()
+        }
+    ];
+    saveUsers(defaultUsers);
+    return defaultUsers;
+}
+
+/**
+ * Save users to localStorage
+ */
+function saveUsers(users) {
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
+/**
+ * Get current logged-in user from session
+ */
+function getCurrentUser() {
+    const userJson = localStorage.getItem('currentUser');
+    return userJson ? JSON.parse(userJson) : null;
+}
+
+/**
+ * Save current user to session
+ */
+function setCurrentUser(user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+/**
+ * Clear current user session (logout)
+ */
+function clearCurrentUser() {
+    localStorage.removeItem('currentUser');
+}
+
+/**
+ * Hash password (simple hash for demo - in production use bcrypt or similar)
+ * Note: This is a simple hash for demonstration. In production, use proper password hashing!
+ */
+function hashPassword(password) {
+    // Simple hash function (NOT secure for production!)
+    // In production, use: bcrypt, argon2, or similar
+    let hash = 0;
+    for (let i = 0; i < password.length; i++) {
+        const char = password.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    return hash.toString();
+}
+
+/**
+ * Verify password (compare with hashed password)
+ */
+function verifyPassword(password, hashedPassword) {
+    return hashPassword(password) === hashedPassword;
+}
+
+// ============================================
+// AUTHENTICATION FUNCTIONS
+// ============================================
+
+/**
+ * Register a new user
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @param {string} role - User role ('admin' or 'customer')
+ * @param {string} name - User name
+ * @returns {Object} - { success: boolean, message: string, user?: Object }
+ */
+function registerUser(email, password, role, name) {
+    // Validate inputs
+    if (!email || !password || !role || !name) {
+        return {
+            success: false,
+            message: 'All fields are required'
+        };
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return {
+            success: false,
+            message: 'Invalid email format'
+        };
+    }
+
+    // Validate role
+    if (role !== 'admin' && role !== 'customer') {
+        return {
+            success: false,
+            message: 'Invalid role. Must be "admin" or "customer"'
+        };
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+        return {
+            success: false,
+            message: 'Password must be at least 6 characters long'
+        };
+    }
+
+    // Get existing users
+    const users = getUsers();
+
+    // Check if user already exists
+    const existingUser = users.find(user => user.email === email);
+    if (existingUser) {
+        return {
+            success: false,
+            message: 'User with this email already exists'
+        };
+    }
+
+    // Create new user
+    const newUser = {
+        id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+        email: email.toLowerCase().trim(),
+        password: hashPassword(password), // Hash the password
+        role: role,
+        name: name,
+        createdAt: new Date().toISOString()
+    };
+
+    // Add user to array
+    users.push(newUser);
+
+    // Save to localStorage
+    saveUsers(users);
+
+    return {
+        success: true,
+        message: 'Registration successful!',
+        user: {
+            id: newUser.id,
+            email: newUser.email,
+            role: newUser.role,
+            name: newUser.name
+        }
+    };
+}
+
+/**
+ * Login user
+ * @param {string} email - User email
+ * @param {string} password - User password
+ * @returns {Object} - { success: boolean, message: string, user?: Object }
+ */
+function loginUser(email, password) {
+    // Validate inputs
+    if (!email || !password) {
+        return {
+            success: false,
+            message: 'Email and password are required'
+        };
+    }
+
+    // Get users
+    const users = getUsers();
+
+    // Find user by email
+    const user = users.find(u => u.email === email.toLowerCase().trim());
+
+    if (!user) {
+        return {
+            success: false,
+            message: 'Invalid email or password'
+        };
+    }
+
+    // Verify password
+    if (!verifyPassword(password, user.password)) {
+        return {
+            success: false,
+            message: 'Invalid email or password'
+        };
+    }
+
+    // Create user session object (without password)
+    const userSession = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        loginTime: new Date().toISOString()
+    };
+
+    // Save to session
+    setCurrentUser(userSession);
+
+    return {
+        success: true,
+        message: 'Login successful!',
+        user: userSession
+    };
+}
+
+/**
+ * Logout current user
+ */
+function logoutUser() {
+    clearCurrentUser();
+    return {
+        success: true,
+        message: 'Logged out successfully'
+    };
+}
+
+/**
+ * Check if user is logged in
+ * @returns {boolean}
+ */
+function isLoggedIn() {
+    return getCurrentUser() !== null;
+}
+
+/**
+ * Check if current user has a specific role
+ * @param {string} role - Role to check ('admin' or 'customer')
+ * @returns {boolean}
+ */
+function hasRole(role) {
+    const user = getCurrentUser();
+    return user && user.role === role;
+}
+
+/**
+ * Check if current user is admin
+ * @returns {boolean}
+ */
+function isAdmin() {
+    return hasRole('admin');
+}
+
+/**
+ * Check if current user is customer
+ * @returns {boolean}
+ */
+function isCustomer() {
+    return hasRole('customer');
+}
+
+/**
+ * Get current user role
+ * @returns {string|null} - 'admin', 'customer', or null
+ */
+function getUserRole() {
+    const user = getCurrentUser();
+    return user ? user.role : null;
+}
+
+/**
+ * Protect route - redirect if not logged in or doesn't have required role
+ * @param {string} requiredRole - Required role ('admin' or 'customer') or null for any logged-in user
+ * @param {string} redirectUrl - URL to redirect to if access denied
+ */
+function protectRoute(requiredRole = null, redirectUrl = './login.html') {
+    if (!isLoggedIn()) {
+        // Not logged in - redirect to login
+        window.location.href = redirectUrl;
+        return false;
+    }
+
+    if (requiredRole && !hasRole(requiredRole)) {
+        // Wrong role - redirect to appropriate page
+        const userRole = getUserRole();
+        if (userRole === 'admin') {
+            window.location.href = './admin-dashboard.html'; // Admin dashboard
+        } else {
+            window.location.href = './index.html'; // Customer home
+        }
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Redirect if already logged in (for login/signup pages)
+ * @param {string} redirectUrl - URL to redirect to
+ */
+function redirectIfLoggedIn(redirectUrl = './index.html') {
+    if (isLoggedIn()) {
+        const userRole = getUserRole();
+        // Redirect based on role
+        if (userRole === 'admin') {
+            window.location.href = './admin-dashboard.html';
+        } else {
+            window.location.href = redirectUrl;
+        }
+    }
+}
+
+/**
+ * Show user info in navigation (call this on page load)
+ */
+function updateNavigation() {
+    const user = getCurrentUser();
+    const profileDropdown = document.getElementById('profileDropdown');
+    const profileDropdownContainer = document.getElementById('profileDropdownContainer');
+    const loginLink = document.getElementById('loginLink');
+    const logoutLink = document.getElementById('logoutLink');
+    const userInfo = document.getElementById('userInfo');
+    const cartLink = document.getElementById('cartLink');
+
+    if (user) {
+        // User is logged in
+        if (loginLink) loginLink.style.display = 'none';
+        if (logoutLink) logoutLink.style.display = 'block';
+        if (userInfo) {
+            userInfo.textContent = `${user.name} (${user.role})`;
+            userInfo.style.display = 'block';
+        }
+        if (profileDropdown) {
+            profileDropdown.innerHTML = `<i class="bi bi-person-circle fs-4"></i>`;
+            profileDropdown.title = `${user.name} - ${user.role}`;
+        }
+        if (profileDropdownContainer) {
+            profileDropdownContainer.style.display = 'inline-block';
+        }
+        // Show cart only for customers
+        if (cartLink && user.role === 'customer') {
+            cartLink.style.display = 'block';
+        } else if (cartLink) {
+            cartLink.style.display = 'none';
+        }
+    } else {
+        // User is not logged in
+        if (loginLink) loginLink.style.display = 'block';
+        if (logoutLink) logoutLink.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'none';
+        if (profileDropdownContainer) {
+            profileDropdownContainer.style.display = 'none';
+        }
+        if (cartLink) {
+            cartLink.style.display = 'none';
+        }
+    }
+}
+
+/**
+
+ * @param {string} message 
+ * @param {string} type 
+ */
+function showMessage(message, type = 'success') {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    messageDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    messageDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(messageDiv);
+
+    setTimeout(() => {
+        if (messageDiv.parentNode) {
+            messageDiv.remove();
+        }
+    }, 5000);
+}
+
