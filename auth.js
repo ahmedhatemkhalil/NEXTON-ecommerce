@@ -4,9 +4,14 @@
  * This file handles:
  * - User registration (Admin/Customer)
  * - User login
- * - Session management (using localStorage)
+ * - Session management (using localStorage ONLY)
  * - Role-based access control
  * - Logout functionality
+ * 
+ * IMPORTANT: All data is stored in browser's localStorage.
+ * JavaScript cannot write to JSON files - everything uses localStorage.
+ * - Users are stored in localStorage key: 'users'
+ * - Current session is stored in localStorage key: 'currentUser'
  */
 
 // ============================================
@@ -14,20 +19,63 @@
 // ============================================
 
 /**
- * Get all users from localStorage
- * In a real app, this would be an API call to a backend
+ * Migrate existing users to have hashed passwords
+ * This fixes users that were created before password hashing was implemented
  */
-function getUsers() {
-    const usersJson = localStorage.getItem('users');
-    if (usersJson) {
-        return JSON.parse(usersJson);
+function migrateUsersPasswords(users) {
+    let needsMigration = false;
+    const migratedUsers = users.map(user => {
+        // Check if password is already hashed (hashed passwords are numeric strings)
+        // Unhashed passwords are plain text (like "admin123")
+        const isHashed = /^-?\d+$/.test(String(user.password));
+        
+        if (!isHashed) {
+            // Password is not hashed - need to hash it
+            needsMigration = true;
+            // Try to identify which default user this is and hash accordingly
+            if (user.email === "admin@123.com" && user.password === "admin123") {
+                user.password = hashPassword("admin123");
+            } else if (user.email === "customer@123.com" && user.password === "customer123") {
+                user.password = hashPassword("customer123");
+            } else {
+                // For other users, we can't know the original password, so we'll skip
+                // They'll need to reset their password or re-register
+                console.warn(`Cannot migrate password for user: ${user.email}. User will need to reset password.`);
+            }
+        }
+        return user;
+    });
+    
+    if (needsMigration) {
+        saveUsers(migratedUsers);
+        console.log('User passwords migrated successfully');
     }
-    // Initialize with default users from users.json
+    
+    return migratedUsers;
+}
+
+/**
+ * Reset all authentication data (clear localStorage)
+ * Use this if you need to start fresh
+ * WARNING: This will delete all users and current session
+ */
+function resetAuthData() {
+    localStorage.removeItem('users');
+    localStorage.removeItem('currentUser');
+    console.log('Authentication data cleared. Default users will be created on next getUsers() call.');
+}
+
+/**
+ * Initialize default users in localStorage (first time setup)
+ * This creates default admin and customer accounts
+ * All data is stored in localStorage - no JSON files are used
+ */
+function initializeDefaultUsers() {
     const defaultUsers = [
         {
             id: 1,
             email: "admin@123.com",
-            password: "admin123",
+            password: hashPassword("admin123"), // Hash the password before storing
             role: "admin",
             name: "Admin",
             createdAt: new Date().toISOString()
@@ -35,18 +83,41 @@ function getUsers() {
         {
             id: 2,
             email: "customer@123.com",
-            password: "customer123",
+            password: hashPassword("customer123"), // Hash the password before storing
             role: "customer",
             name: "Customer",
             createdAt: new Date().toISOString()
         }
     ];
+    // Save default users to localStorage
     saveUsers(defaultUsers);
     return defaultUsers;
 }
 
 /**
+ * Get all users from localStorage
+ * All user data is stored in browser's localStorage
+ * In a real app, this would be an API call to a backend
+ * 
+ * @returns {Array} Array of user objects
+ */
+function getUsers() {
+    const usersJson = localStorage.getItem('users');
+    if (usersJson) {
+        // Users exist in localStorage - parse and migrate if needed
+        const users = JSON.parse(usersJson);
+        // Migrate passwords if they're not hashed (for backward compatibility)
+        return migrateUsersPasswords(users);
+    }
+    // No users in localStorage - initialize with default users
+    // This only happens on first visit (localStorage is empty)
+    return initializeDefaultUsers();
+}
+
+/**
  * Save users to localStorage
+ * All user data is persisted in browser's localStorage
+ * This is the only storage mechanism - no JSON files are used
  */
 function saveUsers(users) {
     localStorage.setItem('users', JSON.stringify(users));

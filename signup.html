@@ -38,18 +38,6 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="role" class="auth-label">Account Type</label>
-                        <div class="auth-input-wrapper">
-                            <i class="bi bi-shield-check auth-input-icon"></i>
-                            <select class="form-control auth-input" id="role" required>
-                                <option value="">Select account type</option>
-                                <option value="customer">Customer</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                        <small class="text-muted">Choose your account type. Admin accounts have additional privileges.</small>
-                    </div>
 
                     <div class="mb-4">
                         <label for="password" class="auth-label">Password</label>
@@ -131,9 +119,12 @@
             // Get form values
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
-            const role = document.getElementById('role').value;
             const password = document.getElementById('password').value;
             const passwordAgain = document.getElementById('password-again').value;
+
+            // All new registrations are automatically "customer" role
+            // Admin account is predefined in auth.js and cannot be created through registration
+            const role = 'customer';
 
             // Validate passwords match
             if (password !== passwordAgain) {
@@ -145,7 +136,7 @@
                 return;
             }
 
-            // Register user
+            // Register user (automatically as customer)
             const result = registerUser(email, password, role, name);
 
             if (result.success) {
