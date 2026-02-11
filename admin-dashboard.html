@@ -320,11 +320,6 @@
                                         class="text-danger">*</span></label>
                                 <select class="form-select admin-input" id="editProductCategory" required>
                                     <option value="">Select category</option>
-                                    <option value="Coats">Coats</option>
-                                    <option value="Sweaters">Sweaters</option>
-                                    <option value="Shirts">Shirts</option>
-                                    <option value="Pants">Pants</option>
-                                    <option value="Accessories">Accessories</option>
                                 </select>
                             </div>
                         </div>
@@ -341,6 +336,10 @@
                                 <input type="number" class="form-control admin-input" id="editProductStock" min="0"
                                     required>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductImage" class="admin-form-label">Image URL</label>
+                            <input type="url" class="form-control admin-input" id="editProductImage" placeholder="https://example.com/image.png">
                         </div>
                         <div class="mb-3">
                             <label for="editProductDescription" class="admin-form-label">Description</label>
@@ -401,6 +400,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="auth.js"></script>
+    <script src="products.js"></script>
+    <script src="orders.js"></script>
     <script>
         // Protect this route - only admins can access
         if (!protectRoute('admin', './login.html')) {
@@ -430,18 +431,435 @@
             });
         }
 
-        // Form validation and interactions (design only - no functionality)
+        // ============================================
+        // PRODUCT MANAGEMENT FUNCTIONALITY
+        // ============================================
+
+        // Load categories dynamically
+        function loadCategories() {
+            const categories = getAllCategories();
+            const categorySelects = document.querySelectorAll('#productCategory, #editProductCategory');
+            categorySelects.forEach(select => {
+                const currentValue = select.value;
+                // Clear existing options except the first one
+                while (select.options.length > 1) {
+                    select.remove(1);
+                }
+                // Add categories
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    select.appendChild(option);
+                });
+                // Restore previous value if exists
+                if (currentValue) {
+                    select.value = currentValue;
+                }
+            });
+        }
+
+
+        // Display products in table
+        function displayProducts(products = null) {
+            const productsToShow = products || getProducts();
+            const tbody = document.getElementById('productsTableBody');
+            
+            if (!tbody) return;
+
+            if (productsToShow.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No products found. Add your first product!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = productsToShow.map(product => {
+                // Determine stock status
+                let stockClass = 'high';
+                let stockText = 'In Stock';
+                if (product.stock === 0) {
+                    stockClass = 'danger';
+                    stockText = 'Out of Stock';
+                } else if (product.stock < 10) {
+                    stockClass = 'medium';
+                    stockText = 'Low Stock';
+                }
+
+                return `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>
+                            <strong>${product.name}</strong>
+                            ${product.description ? `<br><small class="text-muted">${product.description.substring(0, 50)}${product.description.length > 50 ? '...' : ''}</small>` : ''}
+                        </td>
+                        <td><span class="badge bg-secondary">${product.category}</span></td>
+                        <td>
+                            <strong>$${product.price.toFixed(2)}</strong>
+                            ${product.originalPrice && product.originalPrice > product.price ? `<br><small class="text-muted text-decoration-line-through">$${parseFloat(product.originalPrice).toFixed(2)}</small>` : ''}
+                        </td>
+                        <td>
+                            <span class="stock-indicator ${stockClass}">
+                                <i class="bi bi-${product.stock === 0 ? 'x-circle' : product.stock < 10 ? 'exclamation-triangle' : 'check-circle'}"></i>
+                                ${product.stock}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="admin-badge-${stockClass}">${stockText}</span>
+                        </td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="btn admin-btn-edit btn-sm" onclick="editProduct(${product.id})" title="Edit Product">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn admin-btn-danger btn-sm" onclick="deleteProductConfirm(${product.id})" title="Delete Product">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Add Product Form Handler
         document.getElementById('addProductForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
-            showMessage('Product management functionality will be implemented here', 'info');
+            
+            // Get form values
+            const name = document.getElementById('productName').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const price = document.getElementById('productPrice').value;
+            const originalPrice = document.getElementById('productOriginalPrice').value || null;
+            const stock = document.getElementById('productStock').value;
+            const description = document.getElementById('productDescription').value.trim();
+            const image = document.getElementById('productImage').value.trim();
+
+            // Get selected sizes
+            const sizes = [];
+            ['S', 'M', 'L', 'XL', 'XXL'].forEach(size => {
+                const checkbox = document.getElementById(`size${size}`);
+                if (checkbox && checkbox.checked) {
+                    sizes.push(size);
+                }
+            });
+
+            // For now, colors will be empty array (can be added later)
+            const colors = [];
+
+            // Validate required fields
+            if (!name || !category || !price || stock === '') {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Add product
+            const result = addProduct(name, category, price, image, description, stock, sizes, colors, originalPrice);
+
+            if (result.success) {
+                showMessage(result.message, 'success');
+                // Reset form
+                document.getElementById('addProductForm').reset();
+                // Reload products
+                displayProducts();
+                loadCategories();
+            } else {
+                showMessage(result.message, 'error');
+            }
         });
 
+        // Edit Product Function (make it global for onclick handlers)
+        window.editProduct = function(id) {
+            const product = getProductById(id);
+            if (!product) {
+                showMessage('Product not found', 'error');
+                return;
+            }
+
+            // Populate edit form
+            document.getElementById('editProductId').value = product.id;
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductCategory').value = product.category;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductStock').value = product.stock;
+            document.getElementById('editProductImage').value = product.image || '';
+            document.getElementById('editProductDescription').value = product.description || '';
+
+            // Show modal
+            const editModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+            editModal.show();
+        };
+
+        // Save Product Changes
         document.getElementById('saveProductBtn')?.addEventListener('click', function() {
-            showMessage('Product update functionality will be implemented here', 'info');
+            const id = parseInt(document.getElementById('editProductId').value);
+            const name = document.getElementById('editProductName').value.trim();
+            const category = document.getElementById('editProductCategory').value;
+            const price = document.getElementById('editProductPrice').value;
+            const stock = document.getElementById('editProductStock').value;
+            const image = document.getElementById('editProductImage').value.trim();
+            const description = document.getElementById('editProductDescription').value.trim();
+
+            if (!name || !category || !price || stock === '') {
+                showMessage('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Update product (sizes and colors will be preserved from existing product)
+            const result = updateProduct(id, name, category, price, image, description, stock);
+
+            if (result.success) {
+                showMessage(result.message, 'success');
+                // Close modal
+                const editModal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+                editModal.hide();
+                // Reload products
+                displayProducts();
+            } else {
+                showMessage(result.message, 'error');
+            }
         });
 
+        // Delete Product Confirmation (make it global for onclick handlers)
+        window.deleteProductConfirm = function(id) {
+            const product = getProductById(id);
+            if (!product) {
+                showMessage('Product not found', 'error');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete "${product.name}"?\n\nThis action cannot be undone.`)) {
+                const result = deleteProduct(id);
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    displayProducts();
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            }
+        };
+
+        // Search Products
+        document.getElementById('productSearch')?.addEventListener('input', function(e) {
+            const query = e.target.value.trim();
+            if (query === '') {
+                displayProducts();
+            } else {
+                const results = searchProducts(query);
+                displayProducts(results);
+            }
+        });
+
+        // ============================================
+        // ORDER MANAGEMENT FUNCTIONALITY
+        // ============================================
+
+        // Display orders
+        function displayOrders(ordersToShow = null) {
+            const orders = ordersToShow || getAllOrders();
+            const tbody = document.getElementById('ordersTableBody');
+            if (!tbody) return;
+
+            if (orders.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            No orders found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Sort orders by date (newest first)
+            const sortedOrders = [...orders].sort((a, b) => {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            tbody.innerHTML = sortedOrders.map(order => {
+                const orderDate = new Date(order.createdAt);
+                const statusClass = order.status.toLowerCase().replace(' ', '-');
+                
+                return `
+                    <tr>
+                        <td><strong>#${order.id}</strong></td>
+                        <td>
+                            <div>${order.customerName || 'N/A'}</div>
+                            <small class="text-muted">${order.customerEmail || 'N/A'}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">${order.itemsCount || 0} items</span>
+                            ${order.items && order.items.length > 0 ? `<br><small class="text-muted">${order.items[0].productName}${order.items.length > 1 ? ` +${order.items.length - 1} more` : ''}</small>` : ''}
+                        </td>
+                        <td><strong>$${order.total?.toFixed(2) || '0.00'}</strong></td>
+                        <td>${orderDate.toLocaleDateString()}<br><small class="text-muted">${orderDate.toLocaleTimeString()}</small></td>
+                        <td><span class="order-status ${statusClass}">${order.status}</span></td>
+                        <td>
+                            <div class="admin-actions">
+                                <button class="btn admin-btn-edit btn-sm" onclick="editOrderStatus(${order.id})" title="Update Status">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                                ${order.status !== 'completed' ? `<button class="btn admin-btn-danger btn-sm" onclick="deleteOrderConfirm(${order.id})" title="Delete Order">
+                                    <i class="bi bi-trash"></i>
+                                </button>` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Edit Order Status (make it global for onclick handlers)
+        window.editOrderStatus = function(orderId) {
+            const order = getOrderById(orderId);
+            if (!order) {
+                showMessage('Order not found', 'error');
+                return;
+            }
+
+            document.getElementById('editOrderId').value = orderId;
+            document.getElementById('editOrderStatus').value = order.status;
+            
+            const statusModal = new bootstrap.Modal(document.getElementById('editOrderStatusModal'));
+            statusModal.show();
+        };
+
+        // Save Order Status
         document.getElementById('saveOrderStatusBtn')?.addEventListener('click', function() {
-            showMessage('Order status update functionality will be implemented here', 'info');
+            const orderId = parseInt(document.getElementById('editOrderId').value);
+            const status = document.getElementById('editOrderStatus').value;
+
+            if (!orderId || !status) {
+                showMessage('Please select a valid status', 'error');
+                return;
+            }
+
+            const result = updateOrderStatus(orderId, status);
+
+            if (result.success) {
+                showMessage(result.message, 'success');
+                const statusModal = bootstrap.Modal.getInstance(document.getElementById('editOrderStatusModal'));
+                statusModal.hide();
+                displayOrders(); // Refresh orders
+            } else {
+                showMessage(result.message, 'error');
+            }
+        });
+
+        // Delete Order Confirmation (make it global for onclick handlers)
+        window.deleteOrderConfirm = function(orderId) {
+            const order = getOrderById(orderId);
+            if (!order) {
+                showMessage('Order not found', 'error');
+                return;
+            }
+
+            if (order.status === 'completed') {
+                showMessage('Cannot delete a completed order', 'error');
+                return;
+            }
+
+            if (confirm(`Are you sure you want to delete Order #${order.id}?\n\nThis action cannot be undone.`)) {
+                const result = deleteOrder(orderId);
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    displayOrders();
+                } else {
+                    showMessage(result.message, 'error');
+                }
+            }
+        };
+
+        // Load unique customers for customer filter
+        function loadCustomerFilter() {
+            const orders = getAllOrders();
+            const customers = [...new Set(orders.map(order => order.customerEmail))].sort();
+            const customerFilter = document.getElementById('customerFilter');
+            
+            if (customerFilter) {
+                // Clear existing options except the first one
+                while (customerFilter.options.length > 1) {
+                    customerFilter.remove(1);
+                }
+                
+                // Add customers
+                customers.forEach(email => {
+                    const order = orders.find(o => o.customerEmail === email);
+                    const option = document.createElement('option');
+                    option.value = email;
+                    option.textContent = `${order?.customerName || email} (${email})`;
+                    customerFilter.appendChild(option);
+                });
+            }
+        }
+
+        // Order Filters
+        document.getElementById('orderSearch')?.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const allOrders = getAllOrders();
+            
+            if (query === '') {
+                displayOrders(allOrders);
+                return;
+            }
+
+            const filtered = allOrders.filter(order => {
+                return order.id.toString().includes(query) ||
+                       order.customerEmail.toLowerCase().includes(query) ||
+                       order.customerName.toLowerCase().includes(query) ||
+                       order.status.toLowerCase().includes(query);
+            });
+            
+            displayOrders(filtered);
+        });
+
+        document.getElementById('customerFilter')?.addEventListener('change', function(e) {
+            const customerEmail = e.target.value;
+            const allOrders = getAllOrders();
+            
+            if (customerEmail === '') {
+                displayOrders(allOrders);
+                return;
+            }
+
+            const filtered = allOrders.filter(order => order.customerEmail === customerEmail);
+            displayOrders(filtered);
+        });
+
+        document.getElementById('statusFilter')?.addEventListener('change', function(e) {
+            const status = e.target.value;
+            const allOrders = getAllOrders();
+            
+            if (status === '') {
+                displayOrders(allOrders);
+                return;
+            }
+
+            const filtered = allOrders.filter(order => order.status === status);
+            displayOrders(filtered);
+        });
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load categories
+            loadCategories();
+            
+            // Display products
+            displayProducts();
+
+            // Load and display orders
+            loadCustomerFilter();
+            displayOrders();
         });
     </script>
 </body>

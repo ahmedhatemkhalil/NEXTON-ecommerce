@@ -458,8 +458,17 @@ function updateNavigation() {
  * @param {string} type 
  */
 function showMessage(message, type = 'success') {
+    let alertClass = 'alert-success';
+    if (type === 'error') {
+        alertClass = 'alert-danger';
+    } else if (type === 'info') {
+        alertClass = 'alert-info';
+    } else if (type === 'warning') {
+        alertClass = 'alert-warning';
+    }
+
     const messageDiv = document.createElement('div');
-    messageDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    messageDiv.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
     messageDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
     messageDiv.innerHTML = `
         ${message}

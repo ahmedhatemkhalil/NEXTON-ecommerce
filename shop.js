@@ -90,10 +90,29 @@ document.querySelectorAll('.form-check-input').forEach(box => {
 // 6. ADD TO CART
 window.addToCart = function(id) {
     const product = allProducts.find(p => p.id === id);
+    
+    if (!product) {
+        showMessage('Product not found!', 'error');
+        return;
+    }
+
+    // Check stock availability
+    if (product.stock <= 0) {
+        showMessage('Sorry, this product is out of stock!', 'error');
+        return;
+    }
+
+    // Check if adding would exceed stock
+    const currentCartQty = cart.filter(p => p.id === id).length;
+    if (currentCartQty >= product.stock) {
+        showMessage(`Sorry, only ${product.stock} item(s) available in stock.`, 'error');
+        return;
+    }
+    
     cart.push(product);
     localStorage.setItem('nextonCart', JSON.stringify(cart));
     if(cartCount) cartCount.textContent = cart.length;
-    alert("Added to cart!");
+    showMessage('Item added to cart successfully!', 'success');
 };
 
 // Initial Load

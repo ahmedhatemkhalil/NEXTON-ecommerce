@@ -2,8 +2,10 @@
 // We retrieve the raw array of products (e.g., [Shirt, Shirt, Shoes])
 let cart = JSON.parse(localStorage.getItem('nextonCart')) || [];
 
-// Update the nav cart count immediately
-document.getElementById('cart-count').textContent = cart.length;
+// Update the nav cart count immediately (if element exists)
+if (document.getElementById('cart-count')) {
+    document.getElementById('cart-count').textContent = cart.length;
+}
 
 const cartItemsContainer = document.getElementById('cart-items');
 const subtotalEl = document.getElementById('cart-subtotal');
@@ -91,17 +93,26 @@ window.updateQuantity = function(id, newQty) {
 
 // 4. REMOVE ITEM LOGIC
 window.removeItem = function(id) {
-    if(confirm("Are you sure you want to remove this item?")) {
+    const product = cart.find(p => p.id === id);
+    const productName = product ? product.name : 'this item';
+    
+    // Show confirmation toast with action
+    if (confirm(`Are you sure you want to remove "${productName}" from your cart?`)) {
         // Filter out items with this ID
         cart = cart.filter(p => p.id !== id);
         saveAndRefresh();
+        showMessage(`"${productName}" has been removed from your cart.`, 'success');
     }
 };
 
 // 5. HELPER: SAVE TO LOCAL STORAGE & RE-RENDER
 function saveAndRefresh() {
     localStorage.setItem('nextonCart', JSON.stringify(cart));
-    document.getElementById('cart-count').textContent = cart.length;
+    // Update cart count in all places
+    const cartCountElements = document.querySelectorAll('#cart-count');
+    cartCountElements.forEach(el => {
+        el.textContent = cart.length;
+    });
     renderCart();
 }
 
@@ -110,6 +121,116 @@ function updateTotals(total) {
     subtotalEl.textContent = `${total.toFixed(2)} EG`;
     totalEl.textContent = `${total.toFixed(2)} EG`;
 }
+
+// 7. CHECKOUT FUNCTIONALITY
+window.proceedToCheckout = function() {
+    // Check if cart is empty
+    if (cart.length === 0) {
+        showMessage('Your cart is empty. Please add items to your cart before checkout.', 'warning');
+        return;
+    }
+
+    // Check if user is logged in
+    const currentUser = typeof getCurrentUser !== 'undefined' ? getCurrentUser() : null;
+    if (!currentUser) {
+        showMessage('You need to be logged in to checkout. Redirecting to login page...', 'warning');
+        setTimeout(() => {
+            window.location.href = './login.html';
+        }, 2000);
+        return;
+    }
+
+    // Validate stock availability before checkout
+    const groupedCart = {};
+    cart.forEach(product => {
+        if (groupedCart[product.id]) {
+            groupedCart[product.id].qty += 1;
+        } else {
+            groupedCart[product.id] = {
+                qty: 1,
+                product: product
+            };
+        }
+    });
+
+    // Check stock for each item
+    let stockError = null;
+    Object.values(groupedCart).forEach(item => {
+        if (typeof checkStock !== 'undefined') {
+            const stockCheck = checkStock(item.product.id, item.qty);
+            if (!stockCheck.available) {
+                stockError = stockCheck.message;
+            }
+        }
+    });
+
+    if (stockError) {
+        showMessage(`Stock Error: ${stockError}. Please update your cart and try again.`, 'error');
+        renderCart(); // Refresh cart to show current stock
+        return;
+    }
+
+    // Note: Checkout will proceed automatically after stock validation
+    // The user can cancel by not clicking checkout if they change their mind
+
+    // Calculate total
+    let totalPrice = 0;
+    Object.values(groupedCart).forEach(item => {
+        totalPrice += item.product.price * item.qty;
+    });
+
+    // Process checkout (updates stock)
+    if (typeof processCheckout !== 'undefined') {
+        const checkoutResult = processCheckout(cart);
+        if (!checkoutResult.success) {
+            showMessage(`Checkout failed: ${checkoutResult.message}`, 'error');
+            renderCart(); // Refresh cart
+            return;
+        }
+    }
+
+    // Create order
+    if (typeof createOrder !== 'undefined') {
+        const orderResult = createOrder(
+            currentUser.email,
+            currentUser.name,
+            cart,
+            totalPrice
+        );
+
+        if (orderResult.success) {
+            // Clear cart
+            cart = [];
+            localStorage.setItem('nextonCart', JSON.stringify(cart));
+            const cartCountElements = document.querySelectorAll('#cart-count');
+            cartCountElements.forEach(el => {
+                el.textContent = '0';
+            });
+
+            // Show success message with order details
+            showMessage(`Order placed successfully! Order ID: #${orderResult.order.id} | Total: $${totalPrice.toFixed(2)}. Thank you for your purchase!`, 'success');
+
+            // Redirect to home page after a delay
+            setTimeout(() => {
+                window.location.href = './index.html';
+            }, 2000);
+        } else {
+            showMessage(`Failed to create order: ${orderResult.message}`, 'error');
+            renderCart(); // Refresh cart
+        }
+    } else {
+        // Fallback if orders.js is not loaded
+        showMessage('Order system not available. Please contact support.', 'error');
+    }
+};
+
+// Initialize checkout button
+document.addEventListener('DOMContentLoaded', function() {
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', proceedToCheckout);
+    }
+});
 
 // Start
 renderCart();
