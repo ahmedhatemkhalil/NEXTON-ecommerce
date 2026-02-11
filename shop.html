@@ -205,7 +205,7 @@
                         <a class="nav-link" href="about.html">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="shop.html">Products</a>
+                        <a class="nav-link" href="#">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.html">Contact</a>
@@ -225,9 +225,9 @@
                 <!-- Right side icons -->
                 <div class="d-flex align-items-center gap-3">
                     <!-- Shopping Cart Icon -->
-                    <a href="#" class="text-decoration-none position-relative" title="Shopping Cart">
+                    <a href="cart.html" class="text-decoration-none position-relative" title="Shopping Cart">
                         <i class="bi bi-cart3 fs-4"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <span  id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             0
                         </span>
                     </a>
@@ -255,304 +255,63 @@
 
     <div class="container py-5">
         <div class="row">
-            
-            <aside class="col-lg-3 sidebar-col" id="sidebar">
-                <div class="pe-lg-4">
-                    
-                    <div class="filter-section mb-5">
-                        <h6>Categories</h6>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat1">
-                                <label class="form-check-label" for="cat1">Men's Fashion</label>
-                            </div>
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat2">
-                                <label class="form-check-label" for="cat2">Women's Fashion</label>
-                            </div>
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat3">
-                                <label class="form-check-label" for="cat3">Kids & Toys</label>
-                            </div>
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat4" checked>
-                                <label class="form-check-label fw-bold text-dark" for="cat4">Accessories</label>
-                            </div>
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat5">
-                                <label class="form-check-label" for="cat5">Cosmetics</label>
-                            </div>
-                            <div class="form-check custom-checkbox">
-                                <input class="form-check-input" type="checkbox" id="cat6">
-                                <label class="form-check-label" for="cat6">Shoes</label>
-                            </div>
-                        </div>
-                    </div>
+             <aside class="col-lg-3">
+                <div class="mb-4">
+                    <label class="fw-bold mb-2">Search</label>
+                    <input type="search" id="searchInput" class="form-control" placeholder="Search products...">
+                </div>
 
-                    <div class="filter-section mb-5">
-                        <h6>Price range</h6>
-                        <div class="range-slider-track">
-                            <div class="range-slider-fill"></div>
-                            <div class="range-thumb" style="left: 20%;"></div>
-                            <div class="range-thumb" style="left: 80%;"></div>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <div class="input-group input-group-sm">
-                                <span class="input-group-text bg-white border-end-0">$</span>
-                                <input type="number" class="form-control border-start-0 ps-0" value="100">
-                            </div>
-                            <div class="input-group input-group-sm">
-                                <span class="input-group-text bg-white border-end-0">$</span>
-                                <input type="number" class="form-control border-start-0 ps-0" value="500">
-                            </div>
-                        </div>
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Categories</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat1" value="Cardigans">
+                        <label class="form-check-label" for="cat1">Cardigans</label>
                     </div>
-
-                    <div class="filter-section mb-5">
-                        <h6>Sort order</h6>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sort" id="sort1">
-                                <label class="form-check-label small text-secondary" for="sort1">Most Popular</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sort" id="sort2">
-                                <label class="form-check-label small text-secondary" for="sort2">Best Rating</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sort" id="sort3" checked>
-                                <label class="form-check-label small text-secondary" for="sort3">Newest</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="sort" id="sort4">
-                                <label class="form-check-label small text-secondary" for="sort4">Price Low - High</label>
-                            </div>
-                        </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat2" value="Jackets">
+                        <label class="form-check-label" for="cat2">Jackets</label>
                     </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat3" value="Dresses">
+                        <label class="form-check-label" for="cat3">Dresses</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat4" value="Blazers">
+                        <label class="form-check-label" for="cat4">Blazers</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat5" value="Shirts">
+                        <label class="form-check-label" for="cat5">Shirts</label>  
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat6" value="T-Shirts">
+                        <label class="form-check-label" for="cat6">T-Shirts</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat7" value="Sweaters">
+                        <label class="form-check-label" for="cat7">Sweaters</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="cat8" value="Coats">
+                        <label class="form-check-label" for="cat8">Coats</label>
+                    </div>
+                </div>
 
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">Price Range</h6>
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="number" id="minPrice" class="form-control" placeholder="Min" min="0">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" class="form-control" placeholder="Max" min="0">
+                    </div>
+                    <button class="btn btn-dark w-100 mt-2 btn-sm" onclick="applyFilters()">Apply Price</button>
                 </div>
             </aside>
-
             <main class="col-lg-9">
-                <div class="row g-4">
                     
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman1.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">White Wool Sweater</h3>
-                                    <p class="product-cat">Women's Fashion</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$139.99</span>
-                                    <span class="product-price-old">$169.99</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="product-container" class="row g-4">
+                        <!-- Products will be dynamically inserted here -->
                     </div>
-
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman2.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Purple Fur Coat</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.8</span> <span class="rating-count">(68)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman3.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Summer Shades</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(110)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman4.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Office Formal Shirt</h3>
-                                    <p class="product-cat">Women's Fashion</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.5</span> <span class="rating-count">(45)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$170.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman5.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Boho Hat Style</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.3</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman6.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Denim Jacket</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman7.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Denim Jacket</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/man1.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Denim Jacket</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-12 col-sm-6 col-md-6 col-lg-4">
-                        <div class="product-card">
-                            <div class="product-img-container">
-                                <img src="resources/woman8.png" class="product-img" alt="Watch">
-                                <a href="#" class="btn-wishlist"><i class="bi bi-bag"></i></a>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h3 class="product-title">Denim Jacket</h3>
-                                    <p class="product-cat">Accessories</p>
-                                    <div class="rating-stars">
-                                        <i class="bi bi-star-fill"></i>
-                                        <span class="text-dark fw-bold ms-1">4.9</span> <span class="rating-count">(98)</span>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <span class="product-price">$169.99</span>
-                                    <span class="product-price-old">$199.99</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <nav class="mt-5 d-flex justify-content-end">
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a class="page-link border-0 text-dark" href="#"><i class="bi bi-chevron-left"></i></a></li>
-                        <li class="page-item active"><a class="page-link border-0 bg-secondary" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link border-0 text-dark" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link border-0 text-dark" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link border-0 text-dark" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link border-0 text-dark" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link border-0 text-dark" href="#"><i class="bi bi-chevron-right"></i></a></li>
-                    </ul>
-                </nav>
             </main>
         </div>
     </div>
@@ -621,12 +380,8 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Simple function to toggle sidebar on mobile
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('show');
-        }
-    </script>
+    <script src="products.js"></script>
+    <script src="shop.js"></script>
 </body>
 </html>
+

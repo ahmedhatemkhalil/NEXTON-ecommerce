@@ -156,32 +156,56 @@ function addProduct(name, category, price, image, description) {
 }
 
 // UPDATE (New Function)
-function updateProduct(id, name, category, price, image, description) {
+function updateProduct(id, name, category, price, image, description, stock) {
     let products = getProducts();
     const index = products.findIndex(p => p.id === id);
-    
     if (index !== -1) {
-        // Update fields but keep ID and Ratings the same
         products[index] = {
-            ...products[index], // Keep existing data (like ratings)
-            name: name,
-            category: category,
-            price: parseFloat(price),
+            ...products[index],
+            name, category, price: parseFloat(price),
             originalPrice: (parseFloat(price) * 1.2).toFixed(2),
-            image: image,
-            description: description
+            image, description,
+            stock: parseInt(stock) || 0
         };
         saveToDb(products);
     }
 }
 
-// DELETE
 function deleteProduct(id) {
     let products = getProducts().filter(p => p.id !== id);
     saveToDb(products);
 }
 
-// RESET
+// 4. CHECKOUT LOGIC (The "Pay" Function)
+function processCheckout(cartItems) {
+    const dbProducts = getProducts();
+    
+    // Count quantities needed
+    const needed = {};
+    cartItems.forEach(item => {
+        needed[item.id] = (needed[item.id] || 0) + 1;
+    });
+
+    // Validate Stock
+    for (const [id, qty] of Object.entries(needed)) {
+        const product = dbProducts.find(p => p.id == id);
+        if (!product || product.stock < qty) {
+            return { 
+                success: false, 
+                message: `Stock Error: "${product ? product.name : 'Item'}" only has ${product ? product.stock : 0} left.` 
+            };
+        }
+    }
+
+    // Decrement Stock
+    for (const [id, qty] of Object.entries(needed)) {
+        const product = dbProducts.find(p => p.id == id);
+        product.stock -= qty;
+    }
+
+    saveToDb(dbProducts);
+    return { success: true };
+}
 function factoryReset() {
     localStorage.removeItem('nexton_db');
     location.reload();
