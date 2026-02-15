@@ -25,6 +25,11 @@
     color: #0d6efd !important;
 }
 
+/* Keep active nav links white (don't change to black) */
+.nav-link.active {
+    color: #0d6efd !important;
+}
+
 .badge {
     font-size: 0.7rem;
     padding: 0.25em 0.5em;
@@ -35,13 +40,15 @@
 }
 
 .bi-cart3,
-.bi-person-circle {
+.bi-person-circle,
+.bi-heart {
     color: white !important;
     transition: color 0.3s ease;
 }
 
 .bi-cart3:hover,
-.bi-person-circle:hover {
+.bi-person-circle:hover,
+.bi-heart:hover {
     color: #0d6efd !important;
     transition: color 0.3s ease;
 }

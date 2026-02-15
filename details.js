@@ -4,6 +4,9 @@
 // 1. INITIALIZE CART
 let cart = JSON.parse(localStorage.getItem('nextonCart')) || [];
 
+// Initialize Wishlist
+let wishlist = JSON.parse(localStorage.getItem('nextonWishlist')) || [];
+
 // Update cart count (if element exists)
 function updateCartCount() {
     const cartCountEl = document.getElementById('cart-count');
@@ -11,6 +14,59 @@ function updateCartCount() {
         cartCountEl.textContent = cart.length;
     }
 }
+
+// Update wishlist count (if element exists)
+function updateWishlistCount() {
+    const wishlistCountEl = document.getElementById('wishlist-count');
+    if (wishlistCountEl) {
+        wishlistCountEl.textContent = wishlist.length;
+    }
+}
+
+// Check if product is in wishlist
+function isInWishlist(productId) {
+    return wishlist.some(item => item.id === productId);
+}
+
+// Add to wishlist
+function addToWishlist(productId) {
+    const product = getProductById(productId);
+    if (!product) {
+        showMessage('Product not found!', 'error');
+        return false;
+    }
+
+    if (isInWishlist(productId)) {
+        showMessage('This product is already in your wishlist!', 'info');
+        return false;
+    }
+
+    wishlist.push(product);
+    localStorage.setItem('nextonWishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+    showMessage('Product added to wishlist!', 'success');
+    return true;
+}
+
+// Remove from wishlist
+function removeFromWishlist(productId) {
+    wishlist = wishlist.filter(item => item.id !== productId);
+    localStorage.setItem('nextonWishlist', JSON.stringify(wishlist));
+    updateWishlistCount();
+    showMessage('Product removed from wishlist!', 'success');
+    return true;
+}
+
+// Toggle wishlist (add if not present, remove if present)
+window.toggleWishlist = function(productId) {
+    if (isInWishlist(productId)) {
+        removeFromWishlist(productId);
+    } else {
+        addToWishlist(productId);
+    }
+    // Reload product to update button state
+    loadProduct();
+};
 
 // 2. GET PRODUCT ID FROM URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -55,14 +111,14 @@ function loadProduct() {
     detailsContainer.innerHTML = `
         <div class="row">
             <div class="col-md-6 mb-4">
-                <div class="detail-image">
+        <div class="detail-image">
                     <img src="${product.image}" alt="${product.name}" class="img-fluid rounded" 
                          onerror="this.src='https://via.placeholder.com/500'">
                 </div>
-            </div>
-            
+        </div>
+        
             <div class="col-md-6">
-                <div class="detail-info">
+        <div class="detail-info">
                     <p class="detail-category text-muted mb-2">${product.category}</p>
                     <h1 class="mb-3">${product.name}</h1>
                     
@@ -104,7 +160,7 @@ function loadProduct() {
                     
                     <p class="detail-description mb-4">
                         ${product.description || 'No description available.'}
-                    </p>
+            </p>
 
                     <div class="action-area">
                         ${product.stock > 0 ? `
@@ -116,8 +172,9 @@ function loadProduct() {
                                 <i class="bi bi-x-circle"></i> OUT OF STOCK
                             </button>
                         `}
-                        <button class="btn btn-outline-dark btn-lg w-100">
-                            <i class="bi bi-heart"></i> ADD TO WISHLIST
+                        <button onclick="toggleWishlist(${product.id})" class="btn ${isInWishlist(product.id) ? 'btn-danger' : 'btn-outline-danger'} btn-lg w-100" id="wishlist-btn-${product.id}">
+                            <i class="bi ${isInWishlist(product.id) ? 'bi-heart-fill' : 'bi-heart'}"></i> 
+                            ${isInWishlist(product.id) ? 'REMOVE FROM WISHLIST' : 'ADD TO WISHLIST'}
                         </button>
                     </div>
                 </div>
@@ -161,20 +218,22 @@ function displayRecommendedProducts(products, container) {
     container.innerHTML = products.map(product => `
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
             <div class="product-card">
-                <div class="product-img-container">
+                <div class="product-img-container position-relative">
                     <a href="details.html?id=${product.id}">
-                        <img src="${product.image}" class="product-img" alt="${product.name}" 
+                        <img src="${product.image}" style="width: 100%;  object-fit: cover;" class="product-img" alt="${product.name}" 
                              onerror="this.src='https://via.placeholder.com/300'">
                     </a>
                     ${product.stock > 0 ? `
-                        <div class="btn-wishlist" onclick="addToCartFromDetails(${product.id})">
-                            <i class="bi bi-bag"></i>
+                        <div class="position-absolute top-0 end-0 p-2" style="z-index: 10;">
+                            <div class="btn-wishlist bg-white rounded-circle p-2 shadow-sm" onclick="addToCartFromDetails(${product.id})" title="Add to Cart" style="cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-bag text-dark"></i>
+                            </div>
                         </div>
                     ` : ''}
                 </div>
-                <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex justify-content-between align-items-start" style="padding: 10px;">
                     <div>
-                        <h3 class="product-title">${product.name}</h3>
+                        <h3 class="product-title" style="font-size: 1.3rem;">${product.name}</h3>
                         <p class="product-cat">${product.category}</p>
                         ${product.ratings ? `
                             <div class="rating-stars">
@@ -198,6 +257,22 @@ function displayRecommendedProducts(products, container) {
 
 // 6. ADD TO CART LOGIC (with stock validation)
 window.addToCartDetailed = function(id) {
+    // Check if user is logged in
+    const currentUser = typeof getCurrentUser !== 'undefined' ? getCurrentUser() : null;
+    if (!currentUser) {
+        showMessage('Please log in to add items to your cart. Redirecting to login page...', 'warning');
+        setTimeout(() => {
+            window.location.href = './login.html';
+        }, 2000);
+        return;
+    }
+
+    // Only customers can add to cart (admins cannot)
+    if (currentUser.role !== 'customer') {
+        showMessage('Only customers can add items to cart.', 'error');
+        return;
+    }
+
     const product = getProductById(id);
     
     if (!product) {
@@ -236,8 +311,10 @@ window.addToCartFromDetails = function(id) {
     addToCartDetailed(id);
 };
 
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
+    updateWishlistCount();
     loadProduct();
 });

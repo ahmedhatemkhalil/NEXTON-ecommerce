@@ -24,18 +24,18 @@ function displayProducts(products) {
                             </a>
                             <div class="btn-wishlist" onclick="addToCart(${product.id})"><i class="bi bi-bag"></i></div>
                         </div>
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h3 class="product-title">${product.name}</h3>
-                                <p class="product-cat">${product.category}</p>
-                                <div class="rating-stars">
-                                    <i class="bi bi-star-fill"></i>
-                                    <span class="text-dark fw-bold ms-1">${product.ratings}</span> <span class="rating-count">(${product.reviewCount})</span>
+                        <div class="p-2">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h3 class="product-title mb-0">${product.name}</h3>
+                                <div class="text-end">
+                                    <span class="product-price">$${product.price}</span>
+                                    <span class="product-price-old">$${product.originalPrice}</span>
                                 </div>
                             </div>
-                            <div class="text-end">
-                                <span class="product-price">$${product.price}</span>
-                                <span class="product-price-old">$${product.originalPrice}</span>
+                            <p class="product-cat mb-2">${product.category}</p>
+                            <div class="rating-stars">
+                                <i class="bi bi-star-fill"></i>
+                                <span class="text-dark fw-bold ms-1">${product.ratings}</span> <span class="rating-count">(${product.reviewCount})</span>
                             </div>
                         </div>
                     </div>
@@ -89,6 +89,22 @@ document.querySelectorAll('.form-check-input').forEach(box => {
 
 // 6. ADD TO CART
 window.addToCart = function(id) {
+    // Check if user is logged in
+    const currentUser = typeof getCurrentUser !== 'undefined' ? getCurrentUser() : null;
+    if (!currentUser) {
+        showMessage('Please log in to add items to your cart. Redirecting to login page...', 'warning');
+        setTimeout(() => {
+            window.location.href = './login.html';
+        }, 2000);
+        return;
+    }
+
+    // Only customers can add to cart (admins cannot)
+    if (currentUser.role !== 'customer') {
+        showMessage('Only customers can add items to cart.', 'error');
+        return;
+    }
+
     const product = allProducts.find(p => p.id === id);
     
     if (!product) {
@@ -115,5 +131,21 @@ window.addToCart = function(id) {
     showMessage('Item added to cart successfully!', 'success');
 };
 
+// Update wishlist count
+function updateWishlistCount() {
+    try {
+        const wishlist = JSON.parse(localStorage.getItem('nextonWishlist')) || [];
+        const wishlistCountEl = document.getElementById('wishlist-count');
+        if (wishlistCountEl) {
+            wishlistCountEl.textContent = wishlist.length;
+        }
+    } catch (error) {
+        console.error('Error updating wishlist count:', error);
+    }
+}
+
 // Initial Load
+document.addEventListener('DOMContentLoaded', function() {
+    updateWishlistCount();
+});
 displayProducts(allProducts);

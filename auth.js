@@ -4,14 +4,17 @@
  * This file handles:
  * - User registration (Admin/Customer)
  * - User login
- * - Session management (using localStorage ONLY)
+ * - Session management (using localStorage for users, sessionStorage for sessions)
  * - Role-based access control
  * - Logout functionality
  * 
- * IMPORTANT: All data is stored in browser's localStorage.
- * JavaScript cannot write to JSON files - everything uses localStorage.
- * - Users are stored in localStorage key: 'users'
- * - Current session is stored in localStorage key: 'currentUser'
+ * IMPORTANT: All data is stored in browser's storage.
+ * JavaScript cannot write to JSON files - everything uses browser storage.
+ * - Users are stored in localStorage key: 'users' (shared across tabs)
+ * - Current session is stored in sessionStorage key: 'currentUser' (tab-specific)
+ * 
+ * Using sessionStorage for sessions ensures each tab has its own login session,
+ * so logging in as admin in one tab won't affect customer pages in other tabs.
  */
 
 // ============================================
@@ -55,13 +58,13 @@ function migrateUsersPasswords(users) {
 }
 
 /**
- * Reset all authentication data (clear localStorage)
+ * Reset all authentication data (clear localStorage and sessionStorage)
  * Use this if you need to start fresh
  * WARNING: This will delete all users and current session
  */
 function resetAuthData() {
     localStorage.removeItem('users');
-    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
     console.log('Authentication data cleared. Default users will be created on next getUsers() call.');
 }
 
@@ -125,24 +128,27 @@ function saveUsers(users) {
 
 /**
  * Get current logged-in user from session
+ * Uses sessionStorage (tab-specific) so each tab has its own session
  */
 function getCurrentUser() {
-    const userJson = localStorage.getItem('currentUser');
+    const userJson = sessionStorage.getItem('currentUser');
     return userJson ? JSON.parse(userJson) : null;
 }
 
 /**
  * Save current user to session
+ * Uses sessionStorage (tab-specific) so each tab has its own session
  */
 function setCurrentUser(user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
 }
 
 /**
  * Clear current user session (logout)
+ * Uses sessionStorage (tab-specific) so each tab has its own session
  */
 function clearCurrentUser() {
-    localStorage.removeItem('currentUser');
+    sessionStorage.removeItem('currentUser');
 }
 
 /**
@@ -415,7 +421,11 @@ function updateNavigation() {
     const loginLink = document.getElementById('loginLink');
     const logoutLink = document.getElementById('logoutLink');
     const userInfo = document.getElementById('userInfo');
-    const cartLink = document.getElementById('cartLink');
+        const userInfoDropdown = document.getElementById('userInfoDropdown');
+        const cartLink = document.getElementById('cartLink');
+        const wishlistLink = document.getElementById('wishlistLink');
+        const adminDashboardLink = document.getElementById('adminDashboardLink');
+        const trackOrderLink = document.getElementById('trackOrderLink');
 
     if (user) {
         // User is logged in
@@ -424,6 +434,9 @@ function updateNavigation() {
         if (userInfo) {
             userInfo.textContent = `${user.name} (${user.role})`;
             userInfo.style.display = 'block';
+        }
+        if (userInfoDropdown) {
+            userInfoDropdown.textContent = `${user.name} (${user.role})`;
         }
         if (profileDropdown) {
             profileDropdown.innerHTML = `<i class="bi bi-person-circle fs-4"></i>`;
@@ -438,6 +451,20 @@ function updateNavigation() {
         } else if (cartLink) {
             cartLink.style.display = 'none';
         }
+        // Show wishlist for all logged-in users
+        if (wishlistLink) {
+            wishlistLink.style.display = 'block';
+        }
+        // Update wishlist count for all users (logged in or not, in case they have items)
+        updateWishlistCount();
+        // Show admin dashboard link only for admins
+        if (adminDashboardLink) {
+            adminDashboardLink.style.display = user.role === 'admin' ? 'block' : 'none';
+        }
+        // Show track order link only for customers
+        if (trackOrderLink) {
+            trackOrderLink.style.display = user.role === 'customer' ? 'block' : 'none';
+        }
     } else {
         // User is not logged in
         if (loginLink) loginLink.style.display = 'block';
@@ -448,6 +475,15 @@ function updateNavigation() {
         }
         if (cartLink) {
             cartLink.style.display = 'none';
+        }
+        if (wishlistLink) {
+            wishlistLink.style.display = 'none';
+        }
+        if (adminDashboardLink) {
+            adminDashboardLink.style.display = 'none';
+        }
+        if (trackOrderLink) {
+            trackOrderLink.style.display = 'none';
         }
     }
 }

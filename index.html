@@ -27,7 +27,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav  m-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link " aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About</a>
@@ -40,24 +40,19 @@
                     </li>
                 </ul>
 
-                <!-- Search Input -->
-                <!-- <form class="d-flex me-3" role="search">
-                    <div class="input-group">
-                        <input class="form-control" type="search" placeholder="Search products..." aria-label="Search">
-                        <button class="btn btn-outline-light" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form> -->
+              
 
                 <!-- Right side icons -->
                 <div class="d-flex align-items-center gap-3">
                     <!-- Shopping Cart Icon (only for customers) -->
-                    <a href="cart.html" class="text-decoration-none position-relative" id="cartLink" title="Shopping Cart" style="display: none;">
+                    <a href="cart.html" class="text-decoration-none position-relative text-white" id="cartLink" title="Shopping Cart" style="display: none;">
                         <i class="bi bi-cart3 fs-4"></i>
-                        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            0
-                        </span>
+                        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+                    <!-- Wishlist Icon -->
+                    <a href="wishlist.html" class="text-decoration-none position-relative text-white" id="wishlistLink" title="Wishlist" style="display: none;">
+                        <i class="bi bi-heart fs-4"></i>
+                        <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
 
                     <!-- User Info (when logged in) -->
@@ -78,6 +73,7 @@
                             <li><span class="dropdown-item-text"><small id="userInfoDropdown"></small></span></li>
                             <li><hr class="dropdown-divider"></li>
                             <li id="adminDashboardLink" style="display: none;"><a class="dropdown-item" href="admin-dashboard.html"><i class="bi bi-speedometer2"></i> Admin Dashboard</a></li>
+                            <li id="trackOrderLink" style="display: none;"><a class="dropdown-item" href="track.html"><i class="bi bi-truck"></i> Track Orders</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
                             <li><hr class="dropdown-divider"></li>

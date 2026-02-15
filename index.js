@@ -14,6 +14,22 @@ function updateCartCount() {
 
 // 2. ADD TO CART FUNCTION
 window.addToCart = function(id) {
+    // Check if user is logged in
+    const currentUser = typeof getCurrentUser !== 'undefined' ? getCurrentUser() : null;
+    if (!currentUser) {
+        showMessage('Please log in to add items to your cart. Redirecting to login page...', 'warning');
+        setTimeout(() => {
+            window.location.href = './login.html';
+        }, 2000);
+        return;
+    }
+
+    // Only customers can add to cart (admins cannot)
+    if (currentUser.role !== 'customer') {
+        showMessage('Only customers can add items to cart.', 'error');
+        return;
+    }
+
     const product = getProductById(id);
     
     if (!product) {
@@ -125,13 +141,27 @@ function loadBestSellers() {
     // Get products sorted by ratings (best sellers)
     const bestSellers = [...allProducts]
         .sort((a, b) => (b.ratings || 0) - (a.ratings || 0))
-        .slice(0, 4);
+        .slice(5,9);
     displayProductsInSection(bestSellers, 'bestsellers-container');
 }
 
-// 6. INITIALIZE PAGE
+// 6. UPDATE WISHLIST COUNT
+function updateWishlistCount() {
+    try {
+        const wishlist = JSON.parse(localStorage.getItem('nextonWishlist')) || [];
+        const wishlistCountEl = document.getElementById('wishlist-count');
+        if (wishlistCountEl) {
+            wishlistCountEl.textContent = wishlist.length;
+        }
+    } catch (error) {
+        console.error('Error updating wishlist count:', error);
+    }
+}
+
+// 7. INITIALIZE PAGE
 document.addEventListener('DOMContentLoaded', function() {
     updateCartCount();
+    updateWishlistCount();
     
     // Load products if containers exist
     if (document.getElementById('recommendations-container')) {

@@ -4,7 +4,7 @@ let cart = JSON.parse(localStorage.getItem('nextonCart')) || [];
 
 // Update the nav cart count immediately (if element exists)
 if (document.getElementById('cart-count')) {
-    document.getElementById('cart-count').textContent = cart.length;
+document.getElementById('cart-count').textContent = cart.length;
 }
 
 const cartItemsContainer = document.getElementById('cart-items');
@@ -16,7 +16,14 @@ function renderCart() {
     cartItemsContainer.innerHTML = ""; // Clear current display
     
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = "<p>Your cart is empty. <a href='index.html'>Start shopping.</a></p>";
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+                <i class="bi bi-cart-x"></i>
+                <h3>Your cart is empty</h3>
+                <p>Start shopping to add items to your cart!</p>
+                <a href="shop.html" class="btn btn-dark mt-3">Browse Products</a>
+            </div>
+        `;
         updateTotals(0);
         return;
     }
@@ -45,23 +52,65 @@ function renderCart() {
         const itemTotal = product.price * qty;
         totalPrice += itemTotal;
 
+        // Get current stock from products.js (real-time stock check)
+        let currentStock = product.stock || 0;
+        if (typeof getProductById !== 'undefined') {
+            const currentProduct = getProductById(product.id);
+            if (currentProduct) {
+                currentStock = currentProduct.stock || 0;
+            }
+        }
+
+        // Determine stock status and max quantity
+        const maxQty = Math.max(0, currentStock);
+        const stockStatus = currentStock <= 0 ? 'out' : currentStock < 5 ? 'low' : 'available';
+        const stockClass = `stock-${stockStatus}`;
+        const stockText = currentStock <= 0 
+            ? 'Out of Stock' 
+            : currentStock < 5 
+                ? `Low Stock (${currentStock} left)` 
+                : `${currentStock} in stock`;
+
+        // If current quantity exceeds stock, adjust it
+        const displayQty = Math.min(qty, maxQty);
+
         const cartRow = document.createElement('div');
         cartRow.className = 'cart-item';
         cartRow.innerHTML = `
             <div class="item-img">
-                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/100'">
+                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/120'">
             </div>
             <div class="item-details">
-                <h3>${product.name}</h3>
-                <p class="price">${product.price.toFixed(2)} EG</p>
+                <div class="item-header">
+                    <h3 class="item-name">${product.name}</h3>
+                    <p class="item-price">$${product.price.toFixed(2)} each</p>
+                    <p class="item-stock ${stockClass}">
+                        <i class="bi bi-${currentStock <= 0 ? 'x-circle' : currentStock < 5 ? 'exclamation-triangle' : 'check-circle'}"></i>
+                        ${stockText}
+                    </p>
+                </div>
                 <div class="qty-control">
-                    <label>Qty:</label>
-                    <input type="number" value="${qty}" min="1" onchange="updateQuantity(${product.id}, this.value)">
-                    <button class="remove-btn" onclick="removeItem(${product.id})">Remove</button>
+                    <label>Quantity:</label>
+                    <div class="qty-input-wrapper">
+                        <button class="qty-btn" onclick="decreaseQuantity(${product.id})" ${displayQty <= 1 ? 'disabled' : ''}>-</button>
+                        <input type="number" 
+                               class="qty-input" 
+                               value="${displayQty}" 
+                               min="1" 
+                               max="${maxQty}"
+                               id="qty-${product.id}"
+                               onchange="updateQuantity(${product.id}, this.value)"
+                               oninput="validateQuantity(${product.id}, this.value, ${maxQty})">
+                        <button class="qty-btn" onclick="increaseQuantity(${product.id}, ${maxQty})" ${displayQty >= maxQty ? 'disabled' : ''}>+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${product.id})">
+                        <i class="bi bi-trash"></i> Remove
+                    </button>
                 </div>
             </div>
             <div class="item-total">
-                ${itemTotal.toFixed(2)} EG
+                <span class="item-total-label">Total</span>
+                <span class="item-total-price">$${itemTotal.toFixed(2)}</span>
             </div>
         `;
         cartItemsContainer.appendChild(cartRow);
@@ -70,15 +119,97 @@ function renderCart() {
     updateTotals(totalPrice);
 }
 
-// 3. UPDATE QUANTITY LOGIC
-window.updateQuantity = function(id, newQty) {
-    newQty = parseInt(newQty);
+// 3. GET CURRENT STOCK FOR PRODUCT
+function getCurrentStock(productId) {
+    if (typeof getProductById !== 'undefined') {
+        const product = getProductById(productId);
+        return product ? (product.stock || 0) : 0;
+    }
+    // Fallback to product in cart
+    const product = cart.find(p => p.id === productId);
+    return product ? (product.stock || 0) : 0;
+}
+
+// 4. VALIDATE QUANTITY INPUT
+window.validateQuantity = function(id, value, maxQty) {
+    const input = document.getElementById(`qty-${id}`);
+    if (!input) return;
     
-    if (newQty < 1) return; // Prevent negative numbers
+    let qty = parseInt(value) || 1;
+    
+    // Enforce limits
+    if (qty < 1) {
+        qty = 1;
+        input.value = 1;
+    } else if (qty > maxQty) {
+        qty = maxQty;
+        input.value = maxQty;
+        showMessage(`Only ${maxQty} item(s) available in stock.`, 'warning');
+    }
+    
+    // Update buttons
+    const decreaseBtn = input.previousElementSibling;
+    const increaseBtn = input.nextElementSibling;
+    if (decreaseBtn) decreaseBtn.disabled = qty <= 1;
+    if (increaseBtn) increaseBtn.disabled = qty >= maxQty;
+};
+
+// 5. INCREASE QUANTITY
+window.increaseQuantity = function(id, maxQty) {
+    const input = document.getElementById(`qty-${id}`);
+    if (!input) return;
+    
+    let currentQty = parseInt(input.value) || 1;
+    const newQty = Math.min(currentQty + 1, maxQty);
+    
+    if (newQty > currentQty) {
+        input.value = newQty;
+        updateQuantity(id, newQty);
+    } else if (newQty >= maxQty) {
+        showMessage(`Only ${maxQty} item(s) available in stock.`, 'warning');
+    }
+};
+
+// 6. DECREASE QUANTITY
+window.decreaseQuantity = function(id) {
+    const input = document.getElementById(`qty-${id}`);
+    if (!input) return;
+    
+    let currentQty = parseInt(input.value) || 1;
+    const newQty = Math.max(1, currentQty - 1);
+    
+    if (newQty < currentQty) {
+        input.value = newQty;
+        updateQuantity(id, newQty);
+    }
+};
+
+// 7. UPDATE QUANTITY LOGIC
+window.updateQuantity = function(id, newQty) {
+    newQty = parseInt(newQty) || 1;
+    
+    if (newQty < 1) {
+        newQty = 1;
+    }
+
+    // Get current stock to validate
+    const currentStock = getCurrentStock(id);
+    if (newQty > currentStock) {
+        newQty = Math.max(1, currentStock);
+        showMessage(`Only ${currentStock} item(s) available in stock. Quantity adjusted.`, 'warning');
+        
+        // Update input field
+        const input = document.getElementById(`qty-${id}`);
+        if (input) {
+            input.value = newQty;
+        }
+    }
 
     // To update quantity, we have to rebuild the raw cart array
     // 1. Remove ALL instances of this product
     const productToUpdate = cart.find(p => p.id === id);
+    if (!productToUpdate) return;
+    
     const otherProducts = cart.filter(p => p.id !== id);
     
     // 2. Add the product back 'newQty' times
@@ -91,21 +222,18 @@ window.updateQuantity = function(id, newQty) {
     saveAndRefresh();
 };
 
-// 4. REMOVE ITEM LOGIC
+// 8. REMOVE ITEM LOGIC
 window.removeItem = function(id) {
     const product = cart.find(p => p.id === id);
     const productName = product ? product.name : 'this item';
     
-    // Show confirmation toast with action
-    if (confirm(`Are you sure you want to remove "${productName}" from your cart?`)) {
-        // Filter out items with this ID
-        cart = cart.filter(p => p.id !== id);
-        saveAndRefresh();
-        showMessage(`"${productName}" has been removed from your cart.`, 'success');
-    }
+    // Filter out items with this ID
+    cart = cart.filter(p => p.id !== id);
+    saveAndRefresh();
+    showMessage(`"${productName}" has been removed from your cart.`, 'success');
 };
 
-// 5. HELPER: SAVE TO LOCAL STORAGE & RE-RENDER
+// 9. HELPER: SAVE TO LOCAL STORAGE & RE-RENDER
 function saveAndRefresh() {
     localStorage.setItem('nextonCart', JSON.stringify(cart));
     // Update cart count in all places
@@ -116,13 +244,13 @@ function saveAndRefresh() {
     renderCart();
 }
 
-// 6. HELPER: UPDATE TOTALS DISPLAY
+// 10. HELPER: UPDATE TOTALS DISPLAY
 function updateTotals(total) {
-    subtotalEl.textContent = `${total.toFixed(2)} EG`;
-    totalEl.textContent = `${total.toFixed(2)} EG`;
+    subtotalEl.textContent = `${total.toFixed(2)} $`;
+    totalEl.textContent = `${total.toFixed(2)} $`;
 }
 
-// 7. CHECKOUT FUNCTIONALITY
+// 11. CHECKOUT FUNCTIONALITY
 window.proceedToCheckout = function() {
     // Check if cart is empty
     if (cart.length === 0) {
@@ -137,6 +265,12 @@ window.proceedToCheckout = function() {
         setTimeout(() => {
             window.location.href = './login.html';
         }, 2000);
+        return;
+    }
+
+    // Only customers can checkout (admins cannot)
+    if (currentUser.role !== 'customer') {
+        showMessage('Only customers can checkout. Admins cannot place orders.', 'error');
         return;
     }
 
@@ -224,8 +358,22 @@ window.proceedToCheckout = function() {
     }
 };
 
+// Update wishlist count
+function updateWishlistCount() {
+    try {
+        const wishlist = JSON.parse(localStorage.getItem('nextonWishlist')) || [];
+        const wishlistCountEl = document.getElementById('wishlist-count');
+        if (wishlistCountEl) {
+            wishlistCountEl.textContent = wishlist.length;
+        }
+    } catch (error) {
+        console.error('Error updating wishlist count:', error);
+    }
+}
+
 // Initialize checkout button
 document.addEventListener('DOMContentLoaded', function() {
+    updateWishlistCount();
     const checkoutBtn = document.getElementById('checkoutBtn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', proceedToCheckout);

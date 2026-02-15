@@ -9,49 +9,60 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light shadow-sm mb-4 bg-white sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light  shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">
                 <img src="src/logo.png" alt="logo">
             </a>
-            
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <!-- Navbar content -->
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav m-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav  m-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="shop.html">Products</a>
+                        <a class="nav-link " href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop.html">Products</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.html">Contact</a>
                     </li>
                 </ul>
 
+              
+
                 <!-- Right side icons -->
                 <div class="d-flex align-items-center gap-3">
                     <!-- Shopping Cart Icon (only for customers) -->
-                    <a href="cart.html" class="text-decoration-none position-relative" id="cartLink" title="Shopping Cart" style="display: none;">
+                    <a href="cart.html" class="text-decoration-none position-relative text-white" id="cartLink" title="Shopping Cart" style="display: none;">
                         <i class="bi bi-cart3 fs-4"></i>
                         <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
+                    <!-- Wishlist Icon -->
+                    <a href="wishlist.html" class="text-decoration-none position-relative text-white" id="wishlistLink" title="Wishlist" style="display: none;">
+                        <i class="bi bi-heart fs-4"></i>
+                        <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+                    </a>
+
                     <!-- User Info (when logged in) -->
-                    <span id="userInfo" class="text-dark me-2" style="display: none; font-size: 0.9rem;"></span>
+                    <span id="userInfo" class="text-white me-2" style="display: none; font-size: 0.9rem;"></span>
+
                     <!-- Login Link (when not logged in) -->
-                    <a href="login.html" class="btn btn-outline-dark btn-sm" id="loginLink" style="display: none;">
+                    <a href="login.html" class="btn btn-outline-light btn-sm" id="loginLink" style="display: none;">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </a>
+
                     <!-- Profile/Logout Icon (when logged in) -->
                     <div class="dropdown" id="profileDropdownContainer" style="display: none;">
-                        <a class="text-decoration-none text-dark" href="#" role="button" id="profileDropdown"
+                        <a class="text-decoration-none text-white" href="#" role="button" id="profileDropdown"
                             data-bs-toggle="dropdown" aria-expanded="false" title="Profile">
                             <i class="bi bi-person-circle fs-4"></i>
                         </a>
@@ -59,6 +70,7 @@
                             <li><span class="dropdown-item-text"><small id="userInfoDropdown"></small></span></li>
                             <li><hr class="dropdown-divider"></li>
                             <li id="adminDashboardLink" style="display: none;"><a class="dropdown-item" href="admin-dashboard.html"><i class="bi bi-speedometer2"></i> Admin Dashboard</a></li>
+                            <li id="trackOrderLink" style="display: none;"><a class="dropdown-item" href="track.html"><i class="bi bi-truck"></i> Track Orders</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Profile</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
@@ -69,7 +81,6 @@
             </div>
         </div>
     </nav>
-
     <div class="container py-4">
         <div id="details-container" class="mb-5">
             </div>
