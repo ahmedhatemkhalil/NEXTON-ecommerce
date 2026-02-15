@@ -12,7 +12,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light  shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light  shadow-sm">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.html">
                 <img src="src/logo.png" alt="logo">
@@ -27,28 +27,20 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav  m-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link "  href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.html">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link"  href="shop.html">Products</a>
+                        <a class="nav-link" href="shop.html">Products</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Contact</a>
+                        <a class="nav-link active" aria-current="page" href="contact.html">Contact</a>
                     </li>
                 </ul>
 
-                <!-- Search Input -->
-                <form class="d-flex me-3" role="search">
-                    <div class="input-group">
-                        <input class="form-control" type="search" placeholder="Search products..." aria-label="Search">
-                        <button class="btn btn-outline-light" type="submit">
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </div>
-                </form>
+              
 
                 <!-- Right side icons -->
                 <div class="d-flex align-items-center gap-3">
@@ -62,12 +54,15 @@
                         <i class="bi bi-heart fs-4"></i>
                         <span id="wishlist-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
+
                     <!-- User Info (when logged in) -->
                     <span id="userInfo" class="text-white me-2" style="display: none; font-size: 0.9rem;"></span>
+
                     <!-- Login Link (when not logged in) -->
                     <a href="login.html" class="btn btn-outline-light btn-sm" id="loginLink" style="display: none;">
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </a>
+
                     <!-- Profile/Logout Icon (when logged in) -->
                     <div class="dropdown" id="profileDropdownContainer" style="display: none;">
                         <a class="text-decoration-none text-white" href="#" role="button" id="profileDropdown"
@@ -89,7 +84,6 @@
             </div>
         </div>
     </nav>
-
     <!-- Contact Section -->
     <section class="contact-section py-5">
         <div class="container">

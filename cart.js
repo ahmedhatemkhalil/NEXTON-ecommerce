@@ -372,11 +372,44 @@ function updateWishlistCount() {
 }
 
 // Initialize checkout button
-document.addEventListener('DOMContentLoaded', function() {
-    updateWishlistCount();
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', proceedToCheckout);
+// cart.js - Add this to your existing file
+
+document.getElementById('checkoutBtn')?.addEventListener('click', function() {
+    // 1. Check if user is logged in
+    const user = getCurrentUser();
+    if (!user) {
+        showMessage('Please log in to complete your purchase.', 'warning');
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+    }
+
+    // 2. Get Cart Data
+    const cart = JSON.parse(localStorage.getItem('nextonCart')) || [];
+    
+    if (cart.length === 0) {
+        showMessage('Your cart is empty!', 'error');
+        return;
+    }
+
+    // 3. Calculate Total
+    const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+    // 4. Create Order (Using orders.js function)
+    const result = createOrder(user.email, user.name, cart, total);
+
+    if (result.success) {
+        // 5. Clear Cart and Redirect
+        localStorage.removeItem('nextonCart'); // Clear cart storage
+        showMessage('Order placed successfully!', 'success');
+        
+        // Optional: Update stock (if using products.js features)
+        // processCheckout(cart); 
+
+        setTimeout(() => {
+            window.location.href = 'track.html'; // Redirect to tracking page
+        }, 1500);
+    } else {
+        showMessage('Failed to place order: ' + result.message, 'error');
     }
 });
 
