@@ -300,9 +300,17 @@ function addProduct(name, category, price, image, description, stock = 0, sizes 
     }
 
     // Check for duplicates
-    if (isDuplicateProduct(product.name)) {
-        return { success: false, message: 'A product with this name already exists' };
-    }
+
+if (isDuplicateProduct(
+        product.name,
+        product.category,
+        product.colors,
+        product.sizes
+    )) {
+    return { success: false, message: 'A product with this name, category, colors, and sizes already exists' };
+}
+
+
 
     try {
         const products = getProducts();
@@ -380,9 +388,19 @@ function updateProduct(id, name, category, price, image, description, stock, siz
         }
 
         // Check for duplicate name (excluding current product)
-        if (updateData.name !== existingProduct.name && isDuplicateProduct(updateData.name, id)) {
-            return { success: false, message: 'A product with this name already exists' };
-        }
+       if (updateData.name !== existingProduct.name || updateData.category !== existingProduct.category) {
+if (isDuplicateProduct(
+        updateData.name,
+        updateData.category,
+        updateData.colors,
+        updateData.sizes,
+        id
+    )) {
+    return { success: false, message: 'A product with this name, category, colors, and sizes already exists' };
+}
+
+}
+
 
         // Update product
         products[index] = {
@@ -414,7 +432,7 @@ function deleteProduct(id) {
     try {
         const products = getProducts();
         const initialLength = products.length;
-        const filteredProducts = products.filter(p => p.id === id);
+        const filteredProducts = products.filter(p => p.id !== id);
 
         if (filteredProducts.length === initialLength) {
             return { success: false, message: 'Product not found' };
@@ -692,3 +710,17 @@ function getLowStockProducts(threshold = 10) {
         return [];
     }
 }
+
+// validtion functions
+//1- prevent duplicate product based on name, category, colors, and sizes
+function isDuplicateProduct(name, category, colors = [], sizes = [], excludeId = null) {
+    const products = getProducts();
+    return products.some(p => 
+        p.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+        p.category.toLowerCase().trim() === category.toLowerCase().trim() &&
+        JSON.stringify((p.colors || []).slice().sort()) === JSON.stringify((colors || []).slice().sort()) &&
+        JSON.stringify((p.sizes || []).slice().sort()) === JSON.stringify((sizes || []).slice().sort()) &&
+        p.id !== excludeId
+    );
+}
+
